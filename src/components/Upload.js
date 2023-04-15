@@ -9,6 +9,12 @@ const Upload = ({ contract, account, provider }) => {
     const [fileURL, setFileURL] = useState("");
     const [data, setData] = useState([]);
 
+    const [items, setItems] = useState([]);
+
+    const [cid, setCID] = useState("");
+
+
+
 
     const progressCallback = (progressData) => {
         let percentageDone =
@@ -18,14 +24,22 @@ const Upload = ({ contract, account, provider }) => {
 
     const deploy = async (e) => {
         e.preventDefault();
-
+        
         // Push file to lighthouse node
         // Both file and folder supported by upload function
 
         const output = await lighthouse.upload(e, "6dd6ec11.39c98da96a2c4a06824928c360b3777f", progressCallback);
         console.log('File Status:', output);
         // console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
-        setData([...data,'https://gateway.lighthouse.storage/ipfs/'+output.data.Hash]);
+
+        setData([...data, 'https://gateway.lighthouse.storage/ipfs/' + output.data.Hash]);
+        setFileURL('https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
+        contract.add(account, fileURL);
+        // console.log(data);
+        const link = JSON.stringify(data);
+        console.log(link);
+        // localStorage.setItem('myData', link);
+        
 
         // console.log('https://gateway.lighthouse.storage/ipfs'+output.data.Hash)
     }
@@ -40,6 +54,24 @@ const Upload = ({ contract, account, provider }) => {
         };
         setFileName(e.target.files[0].name);
         e.preventDefault();
+    }
+
+
+
+
+    const get = async () => {
+        // const item = localStorage.getItem('myData');
+        // console.log(item);
+        const lighthouse = require('@lighthouse-web3/sdk');
+        const uploads = await lighthouse.getUploads(account);
+        setItems(uploads.data.fileList);
+        // console.log(items);
+        setCID(uploads.data.fileList[0].cid);
+
+        items.map((i) => {
+            console.log(i.cid)
+        })
+        // console.log('https://gateway.lighthouse.storage/ipfs/'+cid)
     }
 
     return (
@@ -76,6 +108,23 @@ const Upload = ({ contract, account, provider }) => {
 
                 </div>
             }
+            <button onClick={get}>Get</button>
+
+            
+            {items && 
+                <>
+                {items.map((item) =>
+                    <>
+                    <img src={`https://gateway.lighthouse.storage/ipfs/${item.cid}`} />
+                      
+                    </>
+                  )}
+                </>
+            }
+
+
+
+
         </div>
     );
 }

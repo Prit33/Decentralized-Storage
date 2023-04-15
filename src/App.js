@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import FileUpload from "./components/FileUpload";
 import Display from "./components/Display";
+import Display1 from "./components/Display1";
+
 import Modal from "./components/Modal";
 import "./App.css";
 import abi from "./constants/constants";
@@ -30,7 +32,7 @@ function App() {
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
-        let contractAddress = '0x2d6774dF2931e3A835d23a14B43E461fC088712c';
+        let contractAddress = '0xb430723e86Ca434c2D3aA1365F13e072EcF9F968';
 
         const contract = new ethers.Contract(
           contractAddress,
